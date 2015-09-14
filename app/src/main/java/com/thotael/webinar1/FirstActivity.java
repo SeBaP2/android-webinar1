@@ -1,8 +1,10 @@
 package com.thotael.webinar1;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +14,10 @@ import android.widget.EditText;
 public class FirstActivity extends AppCompatActivity {
 
     public static final String TEXT_PARAM = "enteredText";
+    public static final String PREFERENCES_NAME = "my_config";
+    public static final String PREF_TEXT = "text";
+
+    private SharedPreferences preferences;
 
     private EditText editText;
     private Button button;
@@ -27,19 +33,22 @@ public class FirstActivity extends AppCompatActivity {
     }
 
     private void initControls() {
-        editText = (EditText) findViewById(R.id.edit_field);
+        preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
+
         button = (Button) findViewById(R.id.send_button);
         exitButton = (Button) findViewById(R.id.exit_button);
+        editText = (EditText) findViewById(R.id.edit_field);
+
+        if (preferences.contains(PREF_TEXT)) {
+            editText.setText(preferences.getString(PREF_TEXT, ""));
+        }
     }
 
     private void setupListeners() {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String retrievedText = editText.getText().toString();
-                Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
-                intent.putExtra(TEXT_PARAM, retrievedText);
-                startActivity(intent);
+                openSecondWindow();
             }
         });
         exitButton.setOnClickListener(new View.OnClickListener() {
@@ -48,6 +57,17 @@ public class FirstActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private void openSecondWindow() {
+        Log.d("FirstActivity", "OnClick go on...");
+        String retrievedText = editText.getText().toString();
+
+        preferences.edit().putString(PREF_TEXT, retrievedText).commit();
+
+        Intent intent = new Intent(FirstActivity.this, SecondActivity.class);
+        intent.putExtra(TEXT_PARAM, retrievedText);
+        startActivity(intent);
     }
 
     @Override
