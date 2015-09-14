@@ -2,6 +2,7 @@ package com.thotael.webinar1;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -10,6 +11,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import static android.content.Intent.ACTION_SENDTO;
+import static android.content.Intent.ACTION_VIEW;
 
 public class FirstActivity extends AppCompatActivity {
 
@@ -85,10 +89,27 @@ public class FirstActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.menu_item_www) {
+            openWWW();
+            return true;
+        } else if (id == R.id.menu_item_sms) {
+            openSMSWindow();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openWWW() {
+        Intent wwwIntent = new Intent(ACTION_VIEW);
+        wwwIntent.setData(Uri.parse("http://www.ted.com"));
+        startActivity(wwwIntent);
+    }
+
+    private void openSMSWindow() {
+        Intent smsIntent = new Intent(ACTION_SENDTO);
+        smsIntent.setData(Uri.parse("sms:602409519"));
+        smsIntent.putExtra("sms_body", "Kochaniutka Madzialenka :)");
+        startActivity(smsIntent);
     }
 }
